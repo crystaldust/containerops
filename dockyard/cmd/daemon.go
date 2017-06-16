@@ -17,13 +17,19 @@ limitations under the License.
 package cmd
 
 import (
+	"bufio"
 	"context"
 	"crypto/tls"
 	"fmt"
+	"io/ioutil"
 	"net"
 	"net/http"
 	"os"
+	"os/exec"
 	"os/signal"
+	"strconv"
+	"strings"
+	"syscall"
 	"time"
 
 	log "github.com/Sirupsen/logrus"
@@ -93,6 +99,11 @@ func startDeamon(cmd *cobra.Command, args []string) {
 		os.Exit(1)
 	}
 
+	runtimeFolder := createRuntimeFolder()
+	pid := fmt.Sprintf("%d", os.Getpid())
+	pidPath := fmt.Sprintf("%s/dockyard.pid", runtimeFolder)
+	ioutil.WriteFile(pidPath, []byte(pid), os.ModePerm)
+
 	model.OpenDatabase(&setting.Database)
 	m := macaron.New()
 
@@ -158,9 +169,65 @@ func startDeamon(cmd *cobra.Command, args []string) {
 	log.Errorln("Server gracefully stopped")
 }
 
+func createRuntimeFolder() string {
+	home := os.Getenv("HOME")
+	containeropsRuntimeFolder := fmt.Sprintf("%s/.containerops/run/", home)
+	if err := os.MkdirAll(containeropsRuntimeFolder, 0700); err != nil {
+		log.Warnf("Failed to create cotainerops runtime folder: %s", containeropsRuntimeFolder)
+	}
+	return containeropsRuntimeFolder
+}
+
 // stopDaemon() stop Dockyard's REST API daemon.
 func stopDaemon(cmd *cobra.Command, args []string) {
+	home := os.Getenv("HOME")
+	pidFilePath := fmt.Sprintf("%s/.containerops/run/dockyard.pid", home)
 
+	bs, err := ioutil.ReadFile(pidFilePath)
+	if err != nil {
+		log.Warnf("Failed to get pid file from %s: %s", pidFilePath, err.Error())
+		// Try get the pid by 'ps -ef'
+		// args := []string{"-ef", "|", "grep", "dockyard"}
+		pscmd := "ps -ef | grep 'dockyard.*daemon start' | grep -v grep | awk '{print $2}'"
+		cmd := exec.Command("sh", "-c", pscmd)
+		bs, err := cmd.Output()
+		if err != nil {
+			log.Errorf("Failed to get pid by ps command: %s", err.Error())
+			return
+		}
+		pidStr := strings.TrimRight(string(bs), "\n")
+		if pidStr == "" {
+			log.Error("Dockyard process not found")
+			return
+		}
+
+		pid, _ := strconv.Atoi(pidStr)
+		fmt.Printf("shall we kill the process:%d? (y/n)", pid)
+		// Read from command line
+		reader := bufio.NewReader(os.Stdin)
+		input, _ := reader.ReadString('\n')
+		if input == "\n" || input == "y\n" || input == "Y\n" {
+			killCmd := exec.Command("kill", "-2", pidStr)
+			if _, err := killCmd.Output(); err != nil {
+				fmt.Printf("Failed to kill %s: %s", pidStr, err.Error())
+			} else {
+				fmt.Println("Interrupt signal sent to dockyard daemon")
+			}
+		}
+
+		return
+	}
+
+	pid, err := strconv.Atoi(string(bs))
+	if err != nil {
+		log.Errorf("Failed to parse pid: %s", string(bs))
+		return
+	}
+	if err := syscall.Kill(pid, syscall.SIGINT); err != nil {
+		log.Errorf("Failed to kill %d: %s", pid, err)
+	} else {
+		fmt.Println("Interrupt signal sent to dockyard daemon")
+	}
 }
 
 // monitordAemon() monitor Dockyard's REST API deamon.

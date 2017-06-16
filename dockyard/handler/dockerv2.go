@@ -34,7 +34,6 @@ import (
 	common "github.com/Huawei/containerops/common/utils"
 	"github.com/Huawei/containerops/dockyard/model"
 	"github.com/Huawei/containerops/dockyard/module"
-	"github.com/Huawei/dockyard/module/signature"
 )
 
 // GetPingV2Handler is https://github.com/docker/distribution/blob/master/docs/spec/api.md#api-version-check
@@ -312,7 +311,6 @@ func PutManifestsV2Handler(ctx *macaron.Context) (int, []byte) {
 		return http.StatusBadRequest, result
 	} else {
 		_, imageID, version, _ := module.GetTarsumlist([]byte(data))
-		digest, _ := signature.DigestManifest([]byte(data))
 
 		r := new(model.DockerV2)
 		if err := r.PutAgent(namespace, repository, agent, strconv.FormatInt(version, 10)); err != nil {
@@ -331,10 +329,10 @@ func PutManifestsV2Handler(ctx *macaron.Context) (int, []byte) {
 		}
 
 		random := fmt.Sprintf("%s://%s/v2/%s/%s/manifests/%s",
-			getRequestScheme(ctx.Req.Request), ctx.Req.Request.Host, namespace, repository, digest)
+			getRequestScheme(ctx.Req.Request), ctx.Req.Request.Host, namespace, repository, "digest")
 
 		ctx.Resp.Header().Set("Content-Type", "text/plain; charset=utf-8")
-		ctx.Resp.Header().Set("Docker-Content-Digest", digest)
+		ctx.Resp.Header().Set("Docker-Content-Digest", "digest")
 		ctx.Resp.Header().Set("Location", random)
 
 		status := []int{http.StatusBadRequest, http.StatusAccepted, http.StatusCreated}
@@ -390,10 +388,8 @@ func GetManifestsV2Handler(ctx *macaron.Context) (int, []byte) {
 		return http.StatusBadRequest, result
 	}
 
-	digest, _ := signature.DigestManifest([]byte(t.Manifest))
-
 	ctx.Resp.Header().Set("Content-Type", "application/vnd.docker.distribution.manifest.v2+json")
-	ctx.Resp.Header().Set("Docker-Content-Digest", digest)
+	ctx.Resp.Header().Set("Docker-Content-Digest", "digest")
 	ctx.Resp.Header().Set("Content-Length", fmt.Sprint(len(t.Manifest)))
 
 	return http.StatusOK, []byte(t.Manifest)
