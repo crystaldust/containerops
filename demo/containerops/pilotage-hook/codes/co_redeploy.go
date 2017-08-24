@@ -19,7 +19,10 @@ package main
 import (
 	"fmt"
 	"io"
+<<<<<<< HEAD
+=======
 	"io/ioutil"
+>>>>>>> origin/pilotage-hook
 	"net"
 	"os"
 	"strings"
@@ -54,6 +57,10 @@ func parseEnv(env string) (target, url, sshKey string, err error) {
 		err = fmt.Errorf("CO_DATA value is null\n")
 		return
 	}
+<<<<<<< HEAD
+	fmt.Println(files)
+=======
+>>>>>>> origin/pilotage-hook
 
 	for _, v := range files {
 		s := strings.Split(v, "=")
@@ -124,6 +131,11 @@ func sshCommand(user, privateKey, host string, port int, command string, stdout,
 	return nil
 }
 
+<<<<<<< HEAD
+func publicKeyFile(keyContent string) ssh.AuthMethod {
+
+	key, err := ssh.ParsePrivateKey([]byte(keyContent))
+=======
 func publicKeyFile(file string) ssh.AuthMethod {
 	buffer, err := ioutil.ReadFile(file)
 	if err != nil {
@@ -131,6 +143,7 @@ func publicKeyFile(file string) ssh.AuthMethod {
 	}
 
 	key, err := ssh.ParsePrivateKey(buffer)
+>>>>>>> origin/pilotage-hook
 	if err != nil {
 		return nil
 	}

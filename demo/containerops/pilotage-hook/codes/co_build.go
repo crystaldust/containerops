@@ -84,6 +84,10 @@ func parseEnv(env string) (target, hub, namespace, repo, tag, binary string, err
 
 func push(filePath, hub, namespace, repo, tag, binary string) (string, error) {
 	url := fmt.Sprintf("https://%s/binary/v1/%s/%s/binary/%s/%s", hub, namespace, repo, tag, binary)
+<<<<<<< HEAD
+	fmt.Println(url)
+=======
+>>>>>>> origin/pilotage-hook
 	file, err := os.Open(filePath)
 	if err != nil {
 		return "", err

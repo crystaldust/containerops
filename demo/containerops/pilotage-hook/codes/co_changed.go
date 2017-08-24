@@ -38,8 +38,13 @@ func main() {
 		return
 	}
 
+<<<<<<< HEAD
+	fmt.Fprintf(os.Stdout, "[COUT] CO_RESULT=true\n")
+	fmt.Fprintf(os.Stdout, fmt.Sprintf("[COUT] CO_CHANGED=%t\n", changed))
+=======
 	fmt.Fprintf(os.Stdout, "[COUT] CO_RESULT=true")
 	fmt.Fprintf(os.Stdout, fmt.Sprintf("[COUT] CO_CHANGED=%t", changed))
+>>>>>>> origin/pilotage-hook
 }
 
 func diff(target string) (bool, error) {
