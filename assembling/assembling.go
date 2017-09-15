@@ -20,6 +20,8 @@ import (
 	"fmt"
 	"os"
 
+	_ "github.com/jinzhu/gorm/dialects/mysql"
+
 	"github.com/Huawei/containerops/assembling/cmd"
 )
 

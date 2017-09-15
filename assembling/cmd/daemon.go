@@ -27,6 +27,7 @@ import (
 	"time"
 
 	web "github.com/Huawei/containerops/assembling/web"
+	"github.com/Huawei/containerops/dockyard/model"
 	log "github.com/Sirupsen/logrus"
 	macaron "gopkg.in/macaron.v1"
 
@@ -72,6 +73,7 @@ var addressOption string
 var portOption int
 
 func startDaemon(cmd *cobra.Command, args []string) {
+	model.OpenDatabase(&common.Database)
 	m := macaron.New()
 
 	web.SetAssemblingMacaron(m, "CONFIG_FILE_PATH")
