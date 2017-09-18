@@ -26,8 +26,8 @@ import (
 	"os/signal"
 	"time"
 
+	"github.com/Huawei/containerops/assembling/model"
 	web "github.com/Huawei/containerops/assembling/web"
-	"github.com/Huawei/containerops/dockyard/model"
 	log "github.com/Sirupsen/logrus"
 	macaron "gopkg.in/macaron.v1"
 

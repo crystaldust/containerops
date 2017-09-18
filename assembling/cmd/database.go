@@ -23,33 +23,33 @@ import (
 	"github.com/Huawei/containerops/common"
 )
 
-// databasecmd is sub command which migrate/backup/restore Dockyard's database.
+// databasecmd is sub command which migrate/backup/restore Assembling's database.
 var databaseCmd = &cobra.Command{
 	Use:   "database",
-	Short: "Database sub command migrate/backup/restore Dockyard's database.",
+	Short: "Database sub command migrate/backup/restore Assembling's database.",
 	Long:  ``,
 }
 
-// migrateDatabaseCmd is sub command migrate Dockyard's database.
+// migrateDatabaseCmd is sub command migrate Assembling's database.
 var migrateDatabaseCmd = &cobra.Command{
 	Use:   "migrate",
-	Short: "migrate sub command migrate Dockyard's database.",
+	Short: "migrate sub command migrate Assembling's database.",
 	Long:  ``,
 	Run:   migrateDatabase,
 }
 
-// backupDatabaseCmd is sub command backup Dockyard's database.
+// backupDatabaseCmd is sub command backup Assembling's database.
 var backupDatabaseCmd = &cobra.Command{
 	Use:   "backup",
-	Short: "backup sub command backup Dockyard's database.",
+	Short: "backup sub command backup Assembling's database.",
 	Long:  ``,
 	Run:   backupDatabase,
 }
 
-// restoreDatabaseCmd is sub command restore Dockyard's database.
+// restoreDatabaseCmd is sub command restore Assembling's database.
 var restoreDatabaseCmd = &cobra.Command{
 	Use:   "restore",
-	Short: "restore sub command restore Dockyard's database.",
+	Short: "restore sub command restore Assembling's database.",
 	Long:  ``,
 	Run:   restoreDatabase,
 }
@@ -63,7 +63,7 @@ func init() {
 	databaseCmd.AddCommand(restoreDatabaseCmd)
 }
 
-// migrateDatabase is auto-migrate database of Dockyard.
+// migrateDatabase is auto-migrate database of Assembling.
 func migrateDatabase(cmd *cobra.Command, args []string) {
 	model.OpenDatabase(&common.Database)
 	model.Migrate()

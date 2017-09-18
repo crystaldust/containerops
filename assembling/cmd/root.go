@@ -20,6 +20,7 @@ import (
 	"os"
 
 	"github.com/Huawei/containerops/common"
+	log "github.com/Sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -43,6 +44,7 @@ func init() {
 // initConfig reads in config file and ENV variables if set.
 func initConfig() {
 	if err := common.SetConfig(cfgFile); err != nil {
+		log.Error(err)
 		os.Exit(1)
 	}
 }
