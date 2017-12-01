@@ -157,36 +157,48 @@ func generateEtcdFiles(src string, nodes []*objects.Node, etcdEndpoints string, 
 	configFile := path.Join(src, tools.CAFilesFolder, tools.CARootFilesFolder, tools.CARootConfigFile)
 
 	//Loop Etcd nodes and generate CA files.
+	ch := make(chan error)
 	for i, node := range nodes {
-		//Mkdir with node ip.
-		if utils.IsDirExist(path.Join(sslBase, node.IP)) == false {
-			os.MkdirAll(path.Join(sslBase, node.IP), os.ModePerm)
-		}
-
-		if utils.IsDirExist(path.Join(serviceBase, node.IP)) == false {
-			os.MkdirAll(path.Join(serviceBase, node.IP), os.ModePerm)
-		}
-
-		node := EtcdEndpoint{
-			IP:    node.IP,
-			Name:  fmt.Sprintf("etcd-node-%d", i),
-			Nodes: etcdEndpoints,
-		}
-
-		//Generate Etcd SSL files
-		if files, err := generateEtcdSSLFiles(caFile, caKeyFile, configFile, node, version, sslBase, node.IP); err != nil {
-			return result, err
-		} else {
-			result[node.IP] = files
-		}
-
-		//Generate Etcd Systemd File
-		if files, err := generateEtcdServiceFile(node, version, serviceBase, node.IP); err != nil {
-			return result, err
-		} else {
-			for k, v := range files {
-				result[node.IP][k] = v
+		go func(i int, node *objects.Node) {
+			//Mkdir with node ip.
+			if utils.IsDirExist(path.Join(sslBase, node.IP)) == false {
+				os.MkdirAll(path.Join(sslBase, node.IP), os.ModePerm)
 			}
+
+			if utils.IsDirExist(path.Join(serviceBase, node.IP)) == false {
+				os.MkdirAll(path.Join(serviceBase, node.IP), os.ModePerm)
+			}
+
+			endpoint := EtcdEndpoint{
+				IP:    node.IP,
+				Name:  fmt.Sprintf("etcd-node-%d", i),
+				Nodes: etcdEndpoints,
+			}
+
+			//Generate Etcd SSL files
+			if files, err := generateEtcdSSLFiles(caFile, caKeyFile, configFile, endpoint, version, sslBase, endpoint.IP); err != nil {
+				ch <- err
+				return
+			} else {
+				result[endpoint.IP] = files
+			}
+
+			//Generate Etcd Systemd File
+			if files, err := generateEtcdServiceFile(endpoint, version, serviceBase, endpoint.IP); err != nil {
+				ch <- err
+				return
+			} else {
+				for k, v := range files {
+					result[endpoint.IP][k] = v
+				}
+			}
+			ch <- nil
+
+		}(i, node)
+	}
+	for i := 0; i < len(nodes); i++ {
+		if err := <-ch; err != nil {
+			return result, err
 		}
 	}
 
@@ -287,25 +299,32 @@ func generateEtcdServiceFile(node EtcdEndpoint, version, base, ip string) (map[s
 
 //upload Etcd SSL files and systemd file to nodes
 func uploadEtcdFiles(f map[string]map[string]string, key string, nodes []*objects.Node, stdout io.Writer) error {
+	ch := make(chan error)
 	for _, node := range nodes {
-		files := []map[string]string{}
+		go func(node *objects.Node) {
+			files := []map[string]string{}
 
-		for k, file := range f[node.IP] {
-			switch k {
-			case tools.ServiceEtcdFile:
-				files = append(files, map[string]string{
-					"src":  file,
-					"dest": path.Join(tools.SystemdServerPath, tools.ServiceEtcdFile),
-				})
-			default:
-				files = append(files, map[string]string{
-					"src":  file,
-					"dest": path.Join(EtcdServerConfig, EtcdServerSSL, k),
-				})
+			for k, file := range f[node.IP] {
+				switch k {
+				case tools.ServiceEtcdFile:
+					files = append(files, map[string]string{
+						"src":  file,
+						"dest": path.Join(tools.SystemdServerPath, tools.ServiceEtcdFile),
+					})
+				default:
+					files = append(files, map[string]string{
+						"src":  file,
+						"dest": path.Join(EtcdServerConfig, EtcdServerSSL, k),
+					})
+				}
 			}
-		}
 
-		if err := tools.DownloadComponent(files, node.IP, key, node.User, stdout); err != nil {
+			ch <- tools.DownloadComponent(files, node.IP, key, node.User, stdout)
+
+		}(node)
+	}
+	for i := 0; i < len(nodes); i++ {
+		if err := <-ch; err != nil {
 			return err
 		}
 	}
@@ -321,8 +340,18 @@ func startEtcdCluster(key string, nodes []*objects.Node, stdout io.Writer) error
 		"systemctl start --no-block etcd",
 	}
 
+	ch := make(chan error)
 	for _, node := range nodes {
-		utils.SSHCommand(node.User, key, node.IP, 22, commands, stdout, os.Stderr)
+		go func(node *objects.Node) {
+
+			ch <- utils.SSHCommand(node.User, key, node.IP, 22, commands, stdout, os.Stderr)
+		}(node)
+	}
+
+	for i := 0; i < len(nodes); i++ {
+		if err := <-ch; err != nil {
+			return err
+		}
 	}
 
 	return nil

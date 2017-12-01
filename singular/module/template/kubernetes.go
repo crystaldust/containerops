@@ -2552,7 +2552,7 @@ WorkingDirectory=/var/lib/kubelet
 ExecStart=/usr/local/bin/kubelet \
   --address={{.IP}} \
   --hostname-override={{.IP}} \
-  --pod-infra-container-image=registry.access.redhat.com/rhel7/pod-infrastructure:latest \
+  --pod-infra-container-image=192.168.43.156:8990/juzhen/pod-infrastructure:latest \
   --experimental-bootstrap-kubeconfig=/etc/kubernetes/bootstrap.kubeconfig \
   --kubeconfig=/etc/kubernetes/kubelet.kubeconfig \
   --require-kubeconfig \
@@ -2586,7 +2586,7 @@ WorkingDirectory=/var/lib/kubelet
 ExecStart=/usr/local/bin/kubelet \
   --address={{.IP}} \
   --hostname-override={{.IP}} \
-  --pod-infra-container-image=registry.access.redhat.com/rhel7/pod-infrastructure:latest \
+  --pod-infra-container-image=192.168.43.156:8990/juzhen/pod-infrastructure:latest \
   --experimental-bootstrap-kubeconfig=/etc/kubernetes/bootstrap.kubeconfig \
   --kubeconfig=/etc/kubernetes/kubelet.kubeconfig \
   --require-kubeconfig \
@@ -2620,7 +2620,7 @@ WorkingDirectory=/var/lib/kubelet
 ExecStart=/usr/local/bin/kubelet \
   --address={{.IP}} \
   --hostname-override={{.IP}} \
-  --pod-infra-container-image=registry.access.redhat.com/rhel7/pod-infrastructure:latest \
+  --pod-infra-container-image=192.168.43.156:8990/juzhen/pod-infrastructure:latest \
   --experimental-bootstrap-kubeconfig=/etc/kubernetes/bootstrap.kubeconfig \
   --kubeconfig=/etc/kubernetes/kubelet.kubeconfig \
   --require-kubeconfig \
@@ -2654,7 +2654,7 @@ WorkingDirectory=/var/lib/kubelet
 ExecStart=/usr/local/bin/kubelet \
   --address={{.IP}} \
   --hostname-override={{.IP}} \
-  --pod-infra-container-image=registry.access.redhat.com/rhel7/pod-infrastructure:latest \
+  --pod-infra-container-image=192.168.43.156:8990/juzhen/pod-infrastructure:latest \
   --experimental-bootstrap-kubeconfig=/etc/kubernetes/bootstrap.kubeconfig \
   --kubeconfig=/etc/kubernetes/kubelet.kubeconfig \
   --require-kubeconfig \
@@ -2688,7 +2688,7 @@ WorkingDirectory=/var/lib/kubelet
 ExecStart=/usr/local/bin/kubelet \
   --address={{.IP}} \
   --hostname-override={{.IP}} \
-  --pod-infra-container-image=registry.access.redhat.com/rhel7/pod-infrastructure:latest \
+  --pod-infra-container-image=192.168.43.156:8990/juzhen/pod-infrastructure:latest \
   --experimental-bootstrap-kubeconfig=/etc/kubernetes/bootstrap.kubeconfig \
   --kubeconfig=/etc/kubernetes/kubelet.kubeconfig \
   --require-kubeconfig \
@@ -2722,7 +2722,7 @@ WorkingDirectory=/var/lib/kubelet
 ExecStart=/usr/local/bin/kubelet \
   --address={{.IP}} \
   --hostname-override={{.IP}} \
-  --pod-infra-container-image=registry.access.redhat.com/rhel7/pod-infrastructure:latest \
+  --pod-infra-container-image=192.168.43.156:8990/juzhen/pod-infrastructure:latest \
   --experimental-bootstrap-kubeconfig=/etc/kubernetes/bootstrap.kubeconfig \
   --kubeconfig=/etc/kubernetes/kubelet.kubeconfig \
   --require-kubeconfig \
@@ -2756,7 +2756,7 @@ WorkingDirectory=/var/lib/kubelet
 ExecStart=/usr/local/bin/kubelet \
   --address={{.IP}} \
   --hostname-override={{.IP}} \
-  --pod-infra-container-image=registry.access.redhat.com/rhel7/pod-infrastructure:latest \
+  --pod-infra-container-image=192.168.43.156:8990/juzhen/pod-infrastructure:latest \
   --experimental-bootstrap-kubeconfig=/etc/kubernetes/bootstrap.kubeconfig \
   --kubeconfig=/etc/kubernetes/kubelet.kubeconfig \
   --require-kubeconfig \
@@ -2790,7 +2790,7 @@ WorkingDirectory=/var/lib/kubelet
 ExecStart=/usr/local/bin/kubelet \
   --address={{.IP}} \
   --hostname-override={{.IP}} \
-  --pod-infra-container-image=registry.access.redhat.com/rhel7/pod-infrastructure:latest \
+  --pod-infra-container-image=192.168.43.156:8990/juzhen/pod-infrastructure:latest \
   --experimental-bootstrap-kubeconfig=/etc/kubernetes/bootstrap.kubeconfig \
   --kubeconfig=/etc/kubernetes/kubelet.kubeconfig \
   --require-kubeconfig \
@@ -2824,7 +2824,7 @@ WorkingDirectory=/var/lib/kubelet
 ExecStart=/usr/local/bin/kubelet \
   --address={{.IP}} \
   --hostname-override={{.IP}} \
-  --pod-infra-container-image=registry.access.redhat.com/rhel7/pod-infrastructure:latest \
+  --pod-infra-container-image=192.168.43.156:8990/juzhen/pod-infrastructure:latest \
   --experimental-bootstrap-kubeconfig=/etc/kubernetes/bootstrap.kubeconfig \
   --kubeconfig=/etc/kubernetes/kubelet.kubeconfig \
   --require-kubeconfig \
@@ -2858,7 +2858,7 @@ WorkingDirectory=/var/lib/kubelet
 ExecStart=/usr/local/bin/kubelet \
   --address={{.IP}} \
   --hostname-override={{.IP}} \
-  --pod-infra-container-image=registry.access.redhat.com/rhel7/pod-infrastructure:latest \
+  --pod-infra-container-image=192.168.43.156:8990/juzhen/pod-infrastructure:latest \
   --experimental-bootstrap-kubeconfig=/etc/kubernetes/bootstrap.kubeconfig \
   --kubeconfig=/etc/kubernetes/kubelet.kubeconfig \
   --require-kubeconfig \
@@ -2892,7 +2892,7 @@ WorkingDirectory=/var/lib/kubelet
 ExecStart=/usr/local/bin/kubelet \
   --address={{.IP}} \
   --hostname-override={{.IP}} \
-  --pod-infra-container-image=registry.access.redhat.com/rhel7/pod-infrastructure:latest \
+  --pod-infra-container-image=192.168.43.156:8990/juzhen/pod-infrastructure:latest \
   --experimental-bootstrap-kubeconfig=/etc/kubernetes/bootstrap.kubeconfig \
   --kubeconfig=/etc/kubernetes/kubelet.kubeconfig \
   --require-kubeconfig \
@@ -2926,7 +2926,7 @@ WorkingDirectory=/var/lib/kubelet
 ExecStart=/usr/local/bin/kubelet \
   --address={{.IP}} \
   --hostname-override={{.IP}} \
-  --pod-infra-container-image=registry.access.redhat.com/rhel7/pod-infrastructure:latest \
+  --pod-infra-container-image=192.168.43.156:8990/juzhen/pod-infrastructure:latest \
   --experimental-bootstrap-kubeconfig=/etc/kubernetes/bootstrap.kubeconfig \
   --kubeconfig=/etc/kubernetes/kubelet.kubeconfig \
   --require-kubeconfig \
@@ -2960,7 +2960,7 @@ WorkingDirectory=/var/lib/kubelet
 ExecStart=/usr/local/bin/kubelet \
   --address={{.IP}} \
   --hostname-override={{.IP}} \
-  --pod-infra-container-image=registry.access.redhat.com/rhel7/pod-infrastructure:latest \
+  --pod-infra-container-image=192.168.43.156:8990/juzhen/pod-infrastructure:latest \
   --experimental-bootstrap-kubeconfig=/etc/kubernetes/bootstrap.kubeconfig \
   --kubeconfig=/etc/kubernetes/kubelet.kubeconfig \
   --require-kubeconfig \
@@ -2994,7 +2994,7 @@ WorkingDirectory=/var/lib/kubelet
 ExecStart=/usr/local/bin/kubelet \
   --address={{.IP}} \
   --hostname-override={{.IP}} \
-  --pod-infra-container-image=registry.access.redhat.com/rhel7/pod-infrastructure:latest \
+  --pod-infra-container-image=192.168.43.156:8990/juzhen/pod-infrastructure:latest \
   --experimental-bootstrap-kubeconfig=/etc/kubernetes/bootstrap.kubeconfig \
   --kubeconfig=/etc/kubernetes/kubelet.kubeconfig \
   --require-kubeconfig \
@@ -3028,7 +3028,7 @@ WorkingDirectory=/var/lib/kubelet
 ExecStart=/usr/local/bin/kubelet \
   --address={{.IP}} \
   --hostname-override={{.IP}} \
-  --pod-infra-container-image=registry.access.redhat.com/rhel7/pod-infrastructure:latest \
+  --pod-infra-container-image=192.168.43.156:8990/juzhen/pod-infrastructure:latest \
   --experimental-bootstrap-kubeconfig=/etc/kubernetes/bootstrap.kubeconfig \
   --kubeconfig=/etc/kubernetes/kubelet.kubeconfig \
   --require-kubeconfig \
@@ -3062,7 +3062,7 @@ WorkingDirectory=/var/lib/kubelet
 ExecStart=/usr/local/bin/kubelet \
   --address={{.IP}} \
   --hostname-override={{.IP}} \
-  --pod-infra-container-image=registry.access.redhat.com/rhel7/pod-infrastructure:latest \
+  --pod-infra-container-image=192.168.43.156:8990/juzhen/pod-infrastructure:latest \
   --experimental-bootstrap-kubeconfig=/etc/kubernetes/bootstrap.kubeconfig \
   --kubeconfig=/etc/kubernetes/kubelet.kubeconfig \
   --require-kubeconfig \
@@ -3096,7 +3096,7 @@ WorkingDirectory=/var/lib/kubelet
 ExecStart=/usr/local/bin/kubelet \
   --address={{.IP}} \
   --hostname-override={{.IP}} \
-  --pod-infra-container-image=registry.access.redhat.com/rhel7/pod-infrastructure:latest \
+  --pod-infra-container-image=192.168.43.156:8990/juzhen/pod-infrastructure:latest \
   --experimental-bootstrap-kubeconfig=/etc/kubernetes/bootstrap.kubeconfig \
   --kubeconfig=/etc/kubernetes/kubelet.kubeconfig \
   --require-kubeconfig \
@@ -3130,7 +3130,7 @@ WorkingDirectory=/var/lib/kubelet
 ExecStart=/usr/local/bin/kubelet \
   --address={{.IP}} \
   --hostname-override={{.IP}} \
-  --pod-infra-container-image=registry.access.redhat.com/rhel7/pod-infrastructure:latest \
+  --pod-infra-container-image=192.168.43.156:8990/juzhen/pod-infrastructure:latest \
   --experimental-bootstrap-kubeconfig=/etc/kubernetes/bootstrap.kubeconfig \
   --kubeconfig=/etc/kubernetes/kubelet.kubeconfig \
   --require-kubeconfig \
@@ -3164,7 +3164,7 @@ WorkingDirectory=/var/lib/kubelet
 ExecStart=/usr/local/bin/kubelet \
   --address={{.IP}} \
   --hostname-override={{.IP}} \
-  --pod-infra-container-image=registry.access.redhat.com/rhel7/pod-infrastructure:latest \
+  --pod-infra-container-image=192.168.43.156:8990/juzhen/pod-infrastructure:latest \
   --experimental-bootstrap-kubeconfig=/etc/kubernetes/bootstrap.kubeconfig \
   --kubeconfig=/etc/kubernetes/kubelet.kubeconfig \
   --require-kubeconfig \
@@ -3198,7 +3198,7 @@ WorkingDirectory=/var/lib/kubelet
 ExecStart=/usr/local/bin/kubelet \
   --address={{.IP}} \
   --hostname-override={{.IP}} \
-  --pod-infra-container-image=registry.access.redhat.com/rhel7/pod-infrastructure:latest \
+  --pod-infra-container-image=192.168.43.156:8990/juzhen/pod-infrastructure:latest \
   --experimental-bootstrap-kubeconfig=/etc/kubernetes/bootstrap.kubeconfig \
   --kubeconfig=/etc/kubernetes/kubelet.kubeconfig \
   --require-kubeconfig \
@@ -3232,7 +3232,7 @@ WorkingDirectory=/var/lib/kubelet
 ExecStart=/usr/local/bin/kubelet \
   --address={{.IP}} \
   --hostname-override={{.IP}} \
-  --pod-infra-container-image=registry.access.redhat.com/rhel7/pod-infrastructure:latest \
+  --pod-infra-container-image=192.168.43.156:8990/juzhen/pod-infrastructure:latest \
   --experimental-bootstrap-kubeconfig=/etc/kubernetes/bootstrap.kubeconfig \
   --kubeconfig=/etc/kubernetes/kubelet.kubeconfig \
   --require-kubeconfig \
@@ -3266,7 +3266,7 @@ WorkingDirectory=/var/lib/kubelet
 ExecStart=/usr/local/bin/kubelet \
   --address={{.IP}} \
   --hostname-override={{.IP}} \
-  --pod-infra-container-image=registry.access.redhat.com/rhel7/pod-infrastructure:latest \
+  --pod-infra-container-image=192.168.43.156:8990/juzhen/pod-infrastructure:latest \
   --experimental-bootstrap-kubeconfig=/etc/kubernetes/bootstrap.kubeconfig \
   --kubeconfig=/etc/kubernetes/kubelet.kubeconfig \
   --require-kubeconfig \

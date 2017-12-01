@@ -95,23 +95,35 @@ func (d *Deployment) ParseFromFile(t string, output string) error {
 
 //Download binary file and change mode +x
 func (d *Deployment) DownloadBinaryFile(file, url string, nodes []*Node, stdout io.Writer, timestamp bool) error {
+	ch := make(chan error)
 	for _, node := range nodes {
-		files := []map[string]string{
-			{
-				"src":  url,
-				"dest": path.Join(tools.BinaryServerPath, file),
-			},
-		}
+		go func(node *Node) {
+			files := []map[string]string{
+				{
+					"src":  url,
+					"dest": path.Join(tools.BinaryServerPath, file),
+				},
+			}
 
-		if err := tools.DownloadComponent(files, node.IP, d.Tools.SSH.Private, node.User, stdout); err != nil {
+			if err := tools.DownloadComponent(files, node.IP, d.Tools.SSH.Private, node.User, stdout); err != nil {
+				ch <- err
+				return
+			}
+
+			chmodCmd := fmt.Sprintf("chmod +x %s", path.Join(tools.BinaryServerPath, file))
+			if err := utils.SSHCommand(node.User, d.Tools.SSH.Private, node.IP, tools.DefaultSSHPort, []string{chmodCmd}, stdout, os.Stderr); err != nil {
+				ch <- err
+				return
+			}
+			WriteLog(fmt.Sprintf("%s exec in %s node", chmodCmd, node.IP), stdout, timestamp, d, node)
+			ch <- nil
+
+		}(node)
+	}
+	for i := 0; i < len(nodes); i++ {
+		if err := <-ch; err != nil {
 			return err
 		}
-
-		chmodCmd := fmt.Sprintf("chmod +x %s", path.Join(tools.BinaryServerPath, file))
-		if err := utils.SSHCommand(node.User, d.Tools.SSH.Private, node.IP, tools.DefaultSSHPort, []string{chmodCmd}, stdout, os.Stderr); err != nil {
-			return err
-		}
-		WriteLog(fmt.Sprintf("%s exec in %s node", chmodCmd, node.IP), stdout, timestamp, d, node)
 	}
 
 	return nil

@@ -161,12 +161,22 @@ func DeployInfraStacks(d *objects.Deployment, db bool, stdout io.Writer, timesta
 		}
 
 		//Initialization node environment
+		ch := make(chan error)
 		for _, node := range d.Nodes {
-			objects.WriteLog(fmt.Sprintf("Initializate the %s node environment", node.IP), stdout, timestamp, d, node)
-			if commands, err := tools.InitializationEnvironment(d.Tools.SSH.Private, node.IP, node.User, node.Distro, stdout); err != nil {
+			go func(node *objects.Node) {
+				objects.WriteLog(fmt.Sprintf("Initializate the %s node environment", node.IP), stdout, timestamp, d, node)
+				if commands, err := tools.InitializationEnvironment(d.Tools.SSH.Private, node.IP, node.User, node.Distro, stdout); err != nil {
+					ch <- err
+					// return err
+				} else {
+					objects.WriteLog(fmt.Sprintf("execute commands %v in the %d node", commands, node.ID), stdout, timestamp, d, node)
+					ch <- nil
+				}
+			}(node)
+		}
+		for i := 0; i < len(d.Nodes); i++ {
+			if err := <-ch; err != nil {
 				return err
-			} else {
-				objects.WriteLog(fmt.Sprintf("execute commands %v in the %d node", commands, node.ID), stdout, timestamp, d, node)
 			}
 		}
 
@@ -182,8 +192,13 @@ func DeployInfraStacks(d *objects.Deployment, db bool, stdout io.Writer, timesta
 
 			//Upload CA root files to the nodes.
 			for _, node := range d.Nodes {
-				objects.WriteLog(fmt.Sprintf("Upload root CA files %v to %s node", roots, node.IP), stdout, timestamp, d, node)
-				if err := tools.UploadCARootFiles(d.Tools.SSH.Private, roots, node.IP, node.User, stdout); err != nil {
+				go func(node *objects.Node) {
+					objects.WriteLog(fmt.Sprintf("Upload root CA files %v to %s node", roots, node.IP), stdout, timestamp, d, node)
+					ch <- tools.UploadCARootFiles(d.Tools.SSH.Private, roots, node.IP, node.User, stdout)
+				}(node)
+			}
+			for i := 0; i < len(d.Nodes); i++ {
+				if err := <-ch; err != nil {
 					return err
 				}
 			}

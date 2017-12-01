@@ -122,34 +122,45 @@ func generateFlanneldFiles(src string, nodes []*objects.Node, etcdEndpoints stri
 	caKeyFile := path.Join(src, tools.CAFilesFolder, tools.CARootFilesFolder, tools.CARootKeyFile)
 	configFile := path.Join(src, tools.CAFilesFolder, tools.CARootFilesFolder, tools.CARootConfigFile)
 
+	ch := make(chan error)
 	for i, node := range nodes {
-		//Mkdir with node ip.
-		if utils.IsDirExist(path.Join(base, node.IP)) == false {
-			os.MkdirAll(path.Join(base, node.IP), os.ModePerm)
-		}
+		go func(i int, node *objects.Node) {
 
-		n := FlanneldEndpoint{
-			IP:   node.IP,
-			Name: fmt.Sprintf("flanneld-node-%d", i),
-			Etcd: etcdEndpoints,
-		}
-
-		//generate Flanneld SSL files
-		if files, err := generateFlanneldSSLFiles(caFile, caKeyFile, configFile, n, version, base, node.IP); err != nil {
-			return result, err
-		} else {
-			result[node.IP] = files
-		}
-
-		//generate Flanneld systemd file
-		if files, err := generateFlanneldSystemdFile(n, version, base, node.IP); err != nil {
-			return result, err
-		} else {
-			for k, v := range files {
-				result[node.IP][k] = v
+			//Mkdir with node ip.
+			if utils.IsDirExist(path.Join(base, node.IP)) == false {
+				os.MkdirAll(path.Join(base, node.IP), os.ModePerm)
 			}
-		}
 
+			n := FlanneldEndpoint{
+				IP:   node.IP,
+				Name: fmt.Sprintf("flanneld-node-%d", i),
+				Etcd: etcdEndpoints,
+			}
+
+			//generate Flanneld SSL files
+			if files, err := generateFlanneldSSLFiles(caFile, caKeyFile, configFile, n, version, base, node.IP); err != nil {
+				ch <- err
+				return
+			} else {
+				result[node.IP] = files
+			}
+
+			//generate Flanneld systemd file
+			if files, err := generateFlanneldSystemdFile(n, version, base, node.IP); err != nil {
+				ch <- err
+				return
+			} else {
+				for k, v := range files {
+					result[node.IP][k] = v
+				}
+			}
+			ch <- nil
+		}(i, node)
+	}
+	for i := 0; i < len(nodes); i++ {
+		if err := <-ch; err != nil {
+			return result, err
+		}
 	}
 
 	return result, nil
@@ -246,33 +257,40 @@ func generateFlanneldSystemdFile(node FlanneldEndpoint, version, base, ip string
 
 //uploadFlanneldFiles upload flanneld SSL files and Systemd file
 func uploadFlanneldFiles(f map[string]map[string]string, key string, nodes []*objects.Node, stdout io.Writer) error {
+	ch := make(chan error)
 	for _, node := range nodes {
-		files := []map[string]string{}
+		go func(node *objects.Node) {
+			files := []map[string]string{}
 
-		for k, file := range f[node.IP] {
-			if k == tools.ServiceFlanneldFile {
-				files = append(files, map[string]string{
-					"src":  file,
-					"dest": path.Join(tools.SystemdServerPath, tools.ServiceFlanneldFile),
-				})
-			} else {
-				files = append(files, map[string]string{
-					"src":  file,
-					"dest": path.Join(FlanneldServerConfig, FlanneldServerSSL, k),
-				})
+			for k, file := range f[node.IP] {
+				if k == tools.ServiceFlanneldFile {
+					files = append(files, map[string]string{
+						"src":  file,
+						"dest": path.Join(tools.SystemdServerPath, tools.ServiceFlanneldFile),
+					})
+				} else {
+					files = append(files, map[string]string{
+						"src":  file,
+						"dest": path.Join(FlanneldServerConfig, FlanneldServerSSL, k),
+					})
+				}
 			}
-		}
-		//Mkdir flanneld ssl folder in server
-		initCmd := []string{
-			"mkdir -p /etc/flanneld/ssl",
-		}
+			//Mkdir flanneld ssl folder in server
+			initCmd := []string{
+				"mkdir -p /etc/flanneld/ssl",
+			}
 
-		if err := utils.SSHCommand(node.User, key, node.IP, tools.DefaultSSHPort, initCmd, stdout, os.Stderr); err != nil {
-			return err
-		}
+			if err := utils.SSHCommand(node.User, key, node.IP, tools.DefaultSSHPort, initCmd, stdout, os.Stderr); err != nil {
+				ch <- err
+				return
+			}
 
-		//Upload Systemd file
-		if err := tools.DownloadComponent(files, node.IP, key, node.User, stdout); err != nil {
+			//Upload Systemd file
+			ch <- tools.DownloadComponent(files, node.IP, key, node.User, stdout)
+		}(node)
+	}
+	for i := 0; i < len(nodes); i++ {
+		if err := <-ch; err != nil {
 			return err
 		}
 	}
