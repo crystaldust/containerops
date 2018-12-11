@@ -21,6 +21,7 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"net/url"
 	"os"
 	"path"
 	"strings"
@@ -155,6 +156,9 @@ func (d *Deployment) Check() error {
 			return err
 		}
 	}
+	if err := d.CheckBinaryFilesExist(); err != nil {
+		return err
+	}
 
 	return nil
 }
@@ -169,6 +173,20 @@ func (d *Deployment) CheckServiceAuth() error {
 		}
 	}
 
+	return nil
+}
+
+// CheckBinaryFilesExist checks if all the specified files(if local) exist.
+func (d *Deployment) CheckBinaryFilesExist() error {
+	for _, infra := range d.Infras {
+		for _, component := range infra.Components {
+			if u, err := url.Parse(component.URL); err != nil {
+				return fmt.Errorf("Failed to parse component URL %s: %s", component.URL, err.Error())
+			} else if u.Scheme == "" && utils.IsFileExist(component.URL) == false {
+				return fmt.Errorf("File %s does not exist", component.URL)
+			}
+		}
+	}
 	return nil
 }
 
